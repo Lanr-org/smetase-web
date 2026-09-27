@@ -1,0 +1,7 @@
+export const queryKeys = {
+  me: ['me'],
+  journey: ['journey'],
+  matches: ['matches'],
+  messages: ['messages'],
+  parentPack: ['parent-pack'],
+} as const
