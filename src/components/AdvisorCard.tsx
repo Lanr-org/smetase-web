@@ -16,7 +16,7 @@ const AdvisorCard = () => {
           <div>
             <p className="text-sm font-semibold">{advisor.name}</p>
             <p className="text-xs text-muted">
-              {advisor.handlingSince ? 'Handling your application' : 'Ready when you are'}
+              {advisor.handling ? 'Handling your application' : 'Ready when you are'}
             </p>
           </div>
         </div>

@@ -2,6 +2,7 @@ import { ArrowUp } from 'lucide-react'
 import { useEffect, useRef, useState } from 'react'
 import { useMessages, useSendMessage } from '../features/chat/useChat.js'
 import { useMe } from '../features/me/useMe.js'
+import { IS_SCRIPTED_CHAT } from '../lib/api/studentApi.js'
 import { firstName } from '../utils/format.js'
 import MessageBubble, { TypingIndicator } from './MessageBubble.js'
 import Chip from './ui/Chip.js'
@@ -35,7 +36,15 @@ const ChatPanel = () => {
   return (
     <div className="flex h-full min-h-0 w-full flex-col">
       <div className="border-b border-line px-5 py-3">
-        <p className="font-semibold">{advisor ? `Chat with ${advisor.name}` : 'Chat with Smetase'}</p>
+        <div className="flex items-center gap-2">
+          <p className="font-semibold">{advisor ? `Chat with ${advisor.name}` : 'Chat with Smetase'}</p>
+          {IS_SCRIPTED_CHAT ? (
+            // Until Stage 4: replies are scripted, but profile answers are saved for real.
+            <span className="rounded-full border border-dashed border-muted px-2 py-0.5 text-[10px] font-semibold uppercase tracking-widest text-muted">
+              Scripted chat
+            </span>
+          ) : null}
+        </div>
         <p className="text-xs text-muted">
           {advisor
             ? 'A real person from the Smetase team'

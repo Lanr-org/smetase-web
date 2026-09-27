@@ -1,8 +1,7 @@
 import { isAxiosError } from 'axios'
 import { useState } from 'react'
-import { Navigate, useLocation, useNavigate } from 'react-router-dom'
+import { Navigate, useNavigate } from 'react-router-dom'
 import GoogleSignInButton from '../components/GoogleSignInButton.js'
-import DemoBadge from '../components/ui/DemoBadge.js'
 import Spinner from '../components/ui/Spinner.js'
 import Wordmark from '../components/ui/Wordmark.js'
 import { useSession } from '../features/session/useSession.js'
@@ -12,12 +11,10 @@ import { useSessionStore } from '../store/sessionStore.js'
 const SignInPage = () => {
   const { signedIn } = useSession()
   const navigate = useNavigate()
-  // Keep ?stage= so the review shortcut survives signing in.
-  const { search } = useLocation()
   const [pending, setPending] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
-  if (signedIn) return <Navigate replace to={`/app${search}`} />
+  if (signedIn) return <Navigate replace to="/app" />
 
   const handleCredential = async (credential: string) => {
     setPending(true)
@@ -25,7 +22,7 @@ const SignInPage = () => {
     try {
       const result = await authApi.signInWithGoogle(credential)
       useSessionStore.getState().setSession(result.accessToken, result.student)
-      navigate(`/app${search}`)
+      navigate('/app')
     } catch (err) {
       setError(
         isAxiosError<{ error?: { message?: string } }>(err)
@@ -39,9 +36,8 @@ const SignInPage = () => {
 
   return (
     <main className="flex min-h-dvh flex-col px-6 py-8">
-      <header className="flex items-center justify-between">
+      <header>
         <Wordmark />
-        <DemoBadge />
       </header>
       <div className="mx-auto flex w-full max-w-sm flex-1 flex-col justify-center">
         <h1 className="font-display text-4xl font-semibold leading-[1.1] tracking-tight">

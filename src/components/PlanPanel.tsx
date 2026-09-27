@@ -13,7 +13,7 @@ const SectionLabel = ({ children }: { children: string }) => (
   <p className="text-xs font-medium uppercase tracking-widest text-muted">{children}</p>
 )
 
-const PlanPanel = ({ onOpenParentPack }: { onOpenParentPack: () => void }) => {
+const PlanPanel = ({ onOpenStudyPlan }: { onOpenStudyPlan: () => void }) => {
   const { data: journey } = useJourney()
   const { data: matches = [], isLoading } = useMatches()
   const [filter, setFilter] = useState<Filter>('ALL')
@@ -52,12 +52,12 @@ const PlanPanel = ({ onOpenParentPack }: { onOpenParentPack: () => void }) => {
           <SectionLabel>Your choice</SectionLabel>
           <ProgrammeCard programme={chosen} />
           <div className="rounded-2xl bg-ink p-4 text-paper">
-            <p className="font-display text-base font-medium">Parent Pack</p>
+            <p className="font-display text-base font-medium">Study plan</p>
             <p className="mt-1 text-sm leading-6 text-paper/70">
-              The programme, full cost and next steps, ready to send to your parents.
+              The programme, tuition and next steps, ready to share with a parent, sponsor or anyone helping you.
             </p>
-            <Button variant="inverse" size="sm" className="mt-3" onClick={onOpenParentPack}>
-              Open Parent Pack <ArrowRight size={16} />
+            <Button variant="inverse" size="sm" className="mt-3" onClick={onOpenStudyPlan}>
+              Open study plan <ArrowRight size={16} />
             </Button>
           </div>
         </section>

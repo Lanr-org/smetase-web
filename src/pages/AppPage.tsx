@@ -17,7 +17,7 @@ const AppPage = () => {
   const { data: journey } = useJourney()
 
   const goTo = (target: NextStepTarget) => {
-    if (target === 'PARENT_PACK') navigate('/parent-pack')
+    if (target === 'STUDY_PLAN') navigate('/study-plan')
     else setTab(target)
   }
 
@@ -56,7 +56,7 @@ const AppPage = () => {
             tab === 'PLAN' ? 'block' : 'hidden',
           )}
         >
-          <PlanPanel onOpenParentPack={() => navigate('/parent-pack')} />
+          <PlanPanel onOpenStudyPlan={() => navigate('/study-plan')} />
         </aside>
       </div>
 

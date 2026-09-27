@@ -3,5 +3,5 @@ export const queryKeys = {
   journey: ['journey'],
   matches: ['matches'],
   messages: ['messages'],
-  parentPack: ['parent-pack'],
+  studyPlan: ['study-plan'],
 } as const

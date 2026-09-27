@@ -4,7 +4,7 @@ import Spinner from './components/ui/Spinner.js'
 import { useBootstrapSession, useSession } from './features/session/useSession.js'
 import AppPage from './pages/AppPage.js'
 import NotFoundPage from './pages/NotFoundPage.js'
-import ParentPackPage from './pages/ParentPackPage.js'
+import StudyPlanPage from './pages/StudyPlanPage.js'
 import SignInPage from './pages/SignInPage.js'
 
 const RequireSession = ({ children }: { children: ReactNode }) => {
@@ -35,10 +35,10 @@ const AppRoutes = () => {
         }
       />
       <Route
-        path="/parent-pack"
+        path="/study-plan"
         element={
           <RequireSession>
-            <ParentPackPage />
+            <StudyPlanPage />
           </RequireSession>
         }
       />

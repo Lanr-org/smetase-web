@@ -1,23 +1,13 @@
-import { mockBackend } from './mock.js'
-import type { ChatMessage, Journey, ParentPack, ProgrammeMatch, StudentMe } from './types.js'
+import { mockChat } from './mockChat.js'
+import { portalApi } from './portalApi.js'
 
-export type StudentApi = {
-  getMe: () => Promise<StudentMe>
-  getJourney: () => Promise<Journey>
-  getMatches: () => Promise<ProgrammeMatch[]>
-  toggleShortlist: (programmeId: string) => Promise<ProgrammeMatch>
-  chooseProgramme: (programmeId: string) => Promise<Journey>
-  getMessages: () => Promise<ChatMessage[]>
-  // Returns the new messages: yours plus the reply.
-  sendMessage: (content: string) => Promise<ChatMessage[]>
-  // null until a programme is chosen.
-  getParentPack: () => Promise<ParentPack | null>
-  // Called when the student copies or shares the Parent Pack link ("Parent Packs shared" metric).
-  markParentPackShared: () => Promise<void>
+// Everything the app reads comes through here. Profile, journey, matches and the study plan
+// are real (Stage 3); chat messages are scripted until Stage 4 swaps in the real chat.
+export const studentApi = {
+  ...portalApi,
+  getMessages: mockChat.getMessages,
+  sendMessage: mockChat.sendMessage,
 }
 
-// Stage 1: everything is mocked. Stages 3–4 swap these bodies for HTTP calls.
-export const studentApi: StudentApi = mockBackend
-
-// Lets the UI label demo data so screenshots are never mistaken for real schools.
-export const IS_MOCK = true
+// Lets the chat label itself as scripted until Stage 4.
+export const IS_SCRIPTED_CHAT = true

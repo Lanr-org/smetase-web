@@ -1,5 +1,5 @@
-// The shapes the student API returns. Stage 1 serves them from mock.ts;
-// Stages 3–4 serve the same shapes from the backend.
+// The shapes the student API returns (mirrors the backend's studentPortal.types.ts).
+// Everything is real since Stage 3 except chat messages, which are scripted until Stage 4.
 
 // Backend success envelope ({ success, message, data, meta }).
 export type ApiSuccess<T> = {
@@ -46,7 +46,7 @@ export type JourneyStage = {
 export type NextStep = {
   title: string
   description: string
-  action: { label: string; target: 'CHAT' | 'PLAN' | 'PARENT_PACK' } | null
+  action: { label: string; target: 'CHAT' | 'PLAN' | 'STUDY_PLAN' } | null
 }
 
 export type Journey = {
@@ -57,8 +57,8 @@ export type Journey = {
 
 export type Advisor = {
   name: string
-  // null until a conversation has been handed to this advisor.
-  handlingSince: string | null
+  // true once the conversation has been handed to this advisor.
+  handling: boolean
 }
 
 // Mirrors the backend's IntakeMonth enum.
@@ -80,17 +80,19 @@ export type StudentMe = {
   publicId: string
   firstName: string
   fullName: string
-  email: string
+  email: string | null
   studyLevel: string | null
   destinations: string[]
   intake: { month: IntakeMonth; year: number } | null
   budgetRange: string | null
+  academicBackground: string | null
+  englishTest: string | null
   advisor: Advisor | null
   conversationMode: 'AI_BOT' | 'HUMAN_ADVISOR'
 }
 
-export type Currency = 'GBP' | 'CAD' | 'USD' | 'EUR' | 'NGN'
-export type Money = { amount: number; currency: Currency }
+// currency is any ISO 4217 code (GBP, CAD, EUR, NGN…).
+export type Money = { amount: number; currency: string }
 
 export type ProgrammeMatch = {
   programmeId: string
@@ -99,7 +101,7 @@ export type ProgrammeMatch = {
   schoolName: string
   city: string
   country: string
-  durationMonths: number
+  duration: string // e.g. "2 years"
   intakes: string[]
   tuition: Money
   scores: {
@@ -126,7 +128,8 @@ export type ChatMessage = {
   quickReplies: QuickReply[]
 }
 
-export type ParentPack = {
+// A one-page summary a student shares with a parent, sponsor or anyone helping them.
+export type StudyPlan = {
   studentName: string
   programme: ProgrammeMatch
   costBreakdown: { label: string; amount: Money }[]

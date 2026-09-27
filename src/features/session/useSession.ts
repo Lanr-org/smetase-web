@@ -3,6 +3,7 @@ import { useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { authApi } from '../../lib/api/authApi.js'
 import { refreshSession } from '../../lib/api/client.js'
+import { resetMockChat } from '../../lib/api/mockChat.js'
 import { useSessionStore } from '../../store/sessionStore.js'
 
 export const useSession = () => {
@@ -28,6 +29,7 @@ export const useSignOut = () => {
     } finally {
       useSessionStore.getState().clear()
       queryClient.clear() // no cached data carries over to the next person on this device
+      resetMockChat()
       navigate('/')
     }
   }

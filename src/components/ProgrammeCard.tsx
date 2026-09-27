@@ -1,6 +1,6 @@
 import { Bookmark, BookmarkCheck, Check } from 'lucide-react'
 import { useState } from 'react'
-import { useChooseProgramme, useToggleShortlist } from '../features/matches/useMatches.js'
+import { useChooseProgramme, useSetShortlisted } from '../features/matches/useMatches.js'
 import type { ProgrammeMatch } from '../lib/api/types.js'
 import { cn } from '../utils/cn.js'
 import { formatMoney } from '../utils/format.js'
@@ -30,7 +30,7 @@ const ScoreBreakdown = ({ scores }: { scores: ProgrammeMatch['scores'] }) => {
 }
 
 const ProgrammeCard = ({ programme }: { programme: ProgrammeMatch }) => {
-  const toggle = useToggleShortlist()
+  const shortlist = useSetShortlisted()
   const choose = useChooseProgramme()
   const [showScores, setShowScores] = useState(false)
 
@@ -56,7 +56,7 @@ const ProgrammeCard = ({ programme }: { programme: ProgrammeMatch }) => {
         </div>
         <div>
           <dt className="text-muted">Duration</dt>
-          <dd className="mt-0.5 text-sm">{programme.durationMonths} months</dd>
+          <dd className="mt-0.5 text-sm">{programme.duration}</dd>
         </div>
         <div className="col-span-2">
           <dt className="text-muted">Starts</dt>
@@ -102,8 +102,10 @@ const ProgrammeCard = ({ programme }: { programme: ProgrammeMatch }) => {
           size="sm"
           variant="secondary"
           aria-pressed={programme.shortlisted}
-          disabled={toggle.isPending}
-          onClick={() => toggle.mutate(programme.programmeId)}
+          disabled={shortlist.isPending}
+          onClick={() =>
+            shortlist.mutate({ programmeId: programme.programmeId, shortlisted: !programme.shortlisted })
+          }
         >
           {programme.shortlisted ? (
             <>
