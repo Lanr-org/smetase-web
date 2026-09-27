@@ -1,6 +1,22 @@
 // The shapes the student API returns. Stage 1 serves them from mock.ts;
 // Stages 3–4 serve the same shapes from the backend.
 
+// Backend success envelope ({ success, message, data, meta }).
+export type ApiSuccess<T> = {
+  success: true
+  message: string
+  data: T
+  meta: { requestId: string }
+}
+
+// The signed-in student, from /student/auth/* (real since Stage 2).
+export type StudentSummary = {
+  publicId: string
+  firstName: string
+  fullName: string
+  email: string | null
+}
+
 export type JourneyStageKey =
   | 'PROFILE'
   | 'EXPLORE'

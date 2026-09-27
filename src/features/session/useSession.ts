@@ -1,38 +1,34 @@
-import { useSyncExternalStore } from 'react'
-
-// Stage 1 only: a signed-in flag in localStorage. Stage 2 replaces this with real auth.
-const KEY = 'smetase.session'
-const listeners = new Set<() => void>()
-
-const read = () => {
-  try {
-    return localStorage.getItem(KEY) === '1'
-  } catch {
-    return false
-  }
-}
-
-let signedIn = read()
-
-const setSignedIn = (value: boolean) => {
-  signedIn = value
-  try {
-    if (value) localStorage.setItem(KEY, '1')
-    else localStorage.removeItem(KEY)
-  } catch {
-    // Storage blocked (private mode): the session just lives in memory.
-  }
-  listeners.forEach((listener) => listener())
-}
-
-const subscribe = (listener: () => void) => {
-  listeners.add(listener)
-  return () => {
-    listeners.delete(listener)
-  }
-}
+import { useQueryClient } from '@tanstack/react-query'
+import { useEffect } from 'react'
+import { useNavigate } from 'react-router-dom'
+import { authApi } from '../../lib/api/authApi.js'
+import { refreshSession } from '../../lib/api/client.js'
+import { useSessionStore } from '../../store/sessionStore.js'
 
 export const useSession = () => {
-  const value = useSyncExternalStore(subscribe, () => signedIn)
-  return { signedIn: value, signIn: () => setSignedIn(true), signOut: () => setSignedIn(false) }
+  const status = useSessionStore((s) => s.status)
+  const student = useSessionStore((s) => s.student)
+  return { status, student, signedIn: status === 'signedIn' }
+}
+
+// Runs once at app start: a valid refresh cookie signs the student straight back in.
+export const useBootstrapSession = () => {
+  useEffect(() => {
+    if (useSessionStore.getState().status !== 'checking') return
+    refreshSession().catch(() => useSessionStore.getState().clear())
+  }, [])
+}
+
+export const useSignOut = () => {
+  const queryClient = useQueryClient()
+  const navigate = useNavigate()
+  return async () => {
+    try {
+      await authApi.logout()
+    } finally {
+      useSessionStore.getState().clear()
+      queryClient.clear() // no cached data carries over to the next person on this device
+      navigate('/')
+    }
+  }
 }

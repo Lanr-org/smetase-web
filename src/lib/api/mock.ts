@@ -1,6 +1,7 @@
 // In-memory fake backend for Stage 1. Every school, programme, person and number here
 // is fictional demo data. It exists only so the UI can be built and reviewed before
 // the student API exists.
+import { useSessionStore } from '../../store/sessionStore.js'
 import type { StudentApi } from './studentApi.js'
 import type {
   ChatMessage,
@@ -538,8 +539,20 @@ const replyTo = (content: string): ChatMessage[] => {
 const delay = (ms = 300 + Math.random() * 400) => new Promise((resolve) => setTimeout(resolve, ms))
 const clone = <T>(value: T): T => structuredClone(value)
 
+// Since Stage 2 the student is real: show their name/email instead of the demo "Tobi".
+// (Messages seeded by ?stage= before sign-in still say Tobi; that's fine for review.)
+const syncIdentity = () => {
+  const student = useSessionStore.getState().student
+  if (!student) return
+  state.me.publicId = student.publicId
+  state.me.firstName = student.firstName
+  state.me.fullName = student.fullName
+  state.me.email = student.email ?? state.me.email
+}
+
 export const mockBackend: StudentApi = {
   async getMe() {
+    syncIdentity()
     await delay()
     return clone(state.me)
   },
@@ -587,6 +600,7 @@ export const mockBackend: StudentApi = {
   },
 
   async sendMessage(content) {
+    syncIdentity()
     const mine = message('STUDENT', content)
     state.messages.push(mine)
     await delay(700 + Math.random() * 600)
@@ -597,6 +611,7 @@ export const mockBackend: StudentApi = {
   },
 
   async getParentPack() {
+    syncIdentity()
     await delay()
     return buildParentPack()
   },
