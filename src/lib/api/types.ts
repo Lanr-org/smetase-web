@@ -124,9 +124,15 @@ export type ChatMessage = {
   senderType: 'STUDENT' | 'AGENT' | 'ADVISOR' | 'SYSTEM'
   senderName: string | null
   content: string
+  // Where the message came from (student) or went to (AI/advisor).
+  channel: 'TELEGRAM' | 'WEB'
   createdAt: string
+  // Only on local onboarding prompts; server messages have none.
   quickReplies: QuickReply[]
 }
+
+// advisorHandling: an advisor has taken over, so the AI doesn't reply until it's handed back.
+export type Chat = { messages: ChatMessage[]; advisorHandling: boolean }
 
 // A one-page summary a student shares with a parent, sponsor or anyone helping them.
 export type StudyPlan = {
