@@ -32,7 +32,23 @@ export type JourneyStageStatus = 'DONE' | 'CURRENT' | 'UPCOMING'
 // Who does the work at this stage; ADVISOR stages are the human handoff points.
 export type StageOwner = 'YOU' | 'SMETASE' | 'ADVISOR'
 
-export type ChecklistItem = { id: string; label: string; done: boolean }
+// Steps the system can't detect, ticked by hand. The student ticks deposit and English;
+// proof of funds is their advisor's.
+export type JourneyCheckKey =
+  | 'DEPOSIT_PAID'
+  | 'ENGLISH_TEST_BOOKED'
+  | 'ENGLISH_SCORE_RECEIVED'
+  | 'FUNDS_PLAN_AGREED'
+  | 'FUNDS_DOCUMENTS_READY'
+
+// checkKey is null for items derived from data; canTick says whether the student may change it.
+export type ChecklistItem = {
+  id: string
+  label: string
+  done: boolean
+  checkKey: JourneyCheckKey | null
+  canTick: boolean
+}
 
 export type JourneyStage = {
   key: JourneyStageKey
@@ -151,3 +167,8 @@ export type StudyPlan = {
   advisor: { name: string; email: string | null } | null
   generatedAt: string
 }
+
+// What a parent or sponsor sees through a shared link: the student's first name only.
+export type PublicStudyPlan = Omit<StudyPlan, 'studentName'> & { studentFirstName: string }
+
+export type StudyPlanShareLink = { url: string; expiresAt: string }

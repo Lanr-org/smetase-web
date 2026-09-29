@@ -1,5 +1,14 @@
 import { api } from './client.js'
-import type { ApiSuccess, IntakeMonth, Journey, ProgrammeMatch, StudentMe, StudyPlan } from './types.js'
+import type {
+  ApiSuccess,
+  IntakeMonth,
+  Journey,
+  JourneyCheckKey,
+  ProgrammeMatch,
+  StudentMe,
+  StudyPlan,
+  StudyPlanShareLink,
+} from './types.js'
 
 // The student's own data from /api/v1/student (real since Stage 3).
 
@@ -43,8 +52,19 @@ export const portalApi = {
   createTelegramLink: async () =>
     (await api.post<ApiSuccess<{ url: string; expiresAt: string }>>('/student/telegram-link')).data.data,
 
-  // Called when the student copies or shares their study plan ("study plans shared" measure).
-  markStudyPlanShared: async () => {
-    await api.post('/student/study-plan/shared')
+  // Ticks (done = true) or unticks a step the system can't detect; returns the updated journey.
+  setJourneyCheck: async (key: JourneyCheckKey, done: boolean) => {
+    const url = `/student/journey/checks/${key}`
+    const res = done ? await api.put<ApiSuccess<Journey>>(url) : await api.delete<ApiSuccess<Journey>>(url)
+    return res.data.data
+  },
+
+  // A new read-only link parents can open without signing in (also records the share).
+  createStudyPlanLink: async () =>
+    (await api.post<ApiSuccess<StudyPlanShareLink>>('/student/study-plan/link')).data.data,
+
+  // Stops every link shared so far from working.
+  revokeStudyPlanLinks: async () => {
+    await api.delete('/student/study-plan/link')
   },
 }

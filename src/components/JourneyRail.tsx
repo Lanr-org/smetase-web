@@ -1,6 +1,6 @@
-import { Check, CheckCircle2, Circle } from 'lucide-react'
+import { Check, CheckCircle2, CheckSquare, Circle, Square } from 'lucide-react'
 import { useState } from 'react'
-import { useJourney } from '../features/journey/useJourney.js'
+import { useJourney, useSetJourneyCheck } from '../features/journey/useJourney.js'
 import type { JourneyStageKey, JourneyStageStatus, StageOwner } from '../lib/api/types.js'
 import { cn } from '../utils/cn.js'
 import Badge from './ui/Badge.js'
@@ -23,6 +23,7 @@ const StageDot = ({ status, number }: { status: JourneyStageStatus; number: numb
 
 const JourneyRail = () => {
   const { data: journey, isLoading } = useJourney()
+  const setCheck = useSetJourneyCheck()
   // null = show the current stage open; 'NONE' = everything closed.
   const [openKey, setOpenKey] = useState<JourneyStageKey | 'NONE' | null>(null)
 
@@ -62,17 +63,43 @@ const JourneyRail = () => {
                   <p className="text-sm leading-6 text-muted">{stage.description}</p>
                   <p className="mt-2 text-xs font-medium text-muted">Who: {ownerLabel[stage.owner]}</p>
                   <ul className="mt-2 space-y-1.5">
-                    {stage.checklist.map((item) => (
-                      <li key={item.id} className="flex items-center gap-2 text-sm">
-                        {item.done ? (
-                          <CheckCircle2 size={16} aria-label="Done" />
+                    {stage.checklist.map((item) => {
+                      const key = item.checkKey
+                      return (
+                      <li key={item.id} className="text-sm">
+                        {item.canTick && key ? (
+                          // Steps only the student knows about (deposit paid, English test): tap to tick.
+                          <button
+                            type="button"
+                            role="checkbox"
+                            aria-checked={item.done}
+                            onClick={() => setCheck.mutate({ key, done: !item.done })}
+                            className="-mx-1 flex items-center gap-2 rounded px-1 py-0.5 text-left hover:bg-line/40"
+                          >
+                            {item.done ? (
+                              <CheckSquare size={16} aria-hidden />
+                            ) : (
+                              <Square size={16} className="text-muted" aria-hidden />
+                            )}
+                            <span className={item.done ? '' : 'text-muted'}>{item.label}</span>
+                          </button>
                         ) : (
-                          <Circle size={16} className="text-line" aria-label="Not done yet" />
+                          <span className="flex items-center gap-2">
+                            {item.done ? (
+                              <CheckCircle2 size={16} aria-label="Done" />
+                            ) : (
+                              <Circle size={16} className="text-line" aria-label="Not done yet" />
+                            )}
+                            <span className={item.done ? '' : 'text-muted'}>{item.label}</span>
+                          </span>
                         )}
-                        <span className={item.done ? '' : 'text-muted'}>{item.label}</span>
                       </li>
-                    ))}
+                      )
+                    })}
                   </ul>
+                  {stage.checklist.some((item) => item.canTick) ? (
+                    <p className="mt-2 text-xs text-muted">Tick these off as you go.</p>
+                  ) : null}
                 </div>
               ) : null}
             </li>
