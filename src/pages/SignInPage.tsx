@@ -1,4 +1,3 @@
-import { isAxiosError } from 'axios'
 import { useState } from 'react'
 import { Navigate, useNavigate } from 'react-router-dom'
 import GoogleSignInButton from '../components/GoogleSignInButton.js'
@@ -7,6 +6,7 @@ import Wordmark from '../components/ui/Wordmark.js'
 import { useSession } from '../features/session/useSession.js'
 import { authApi } from '../lib/api/authApi.js'
 import { useSessionStore } from '../store/sessionStore.js'
+import { apiErrorMessage } from '../utils/apiError.js'
 
 const SignInPage = () => {
   const { signedIn } = useSession()
@@ -24,11 +24,7 @@ const SignInPage = () => {
       useSessionStore.getState().setSession(result.accessToken, result.student)
       navigate('/app')
     } catch (err) {
-      setError(
-        isAxiosError<{ error?: { message?: string } }>(err)
-          ? (err.response?.data?.error?.message ?? 'Sign-in failed. Please try again.')
-          : 'Sign-in failed. Please try again.',
-      )
+      setError(apiErrorMessage(err, 'Sign-in failed. Please try again.'))
     } finally {
       setPending(false)
     }

@@ -39,6 +39,10 @@ export const portalApi = {
   // null until a programme is chosen.
   getStudyPlan: () => get<StudyPlan | null>('/student/study-plan'),
 
+  // A one-time t.me link; opening it and tapping Start links that Telegram account to this one.
+  createTelegramLink: async () =>
+    (await api.post<ApiSuccess<{ url: string; expiresAt: string }>>('/student/telegram-link')).data.data,
+
   // Called when the student copies or shares their study plan ("study plans shared" measure).
   markStudyPlanShared: async () => {
     await api.post('/student/study-plan/shared')

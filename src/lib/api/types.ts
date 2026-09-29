@@ -89,6 +89,8 @@ export type StudentMe = {
   englishTest: string | null
   advisor: Advisor | null
   conversationMode: 'AI_BOT' | 'HUMAN_ADVISOR'
+  // A Telegram account is linked, so advisor replies can reach them there too.
+  telegramLinked: boolean
 }
 
 // currency is any ISO 4217 code (GBP, CAD, EUR, NGN…).
@@ -118,6 +120,9 @@ export type ProgrammeMatch = {
 }
 
 export type QuickReply = { label: string; value: string }
+
+// What happened to a Telegram ↔ web link on sign-in (only when a link token was sent).
+export type LinkOutcome = 'LINKED' | 'ALREADY_LINKED' | 'MERGED' | 'REFUSED' | 'INVALID_TOKEN'
 
 export type ChatMessage = {
   id: string

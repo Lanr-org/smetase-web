@@ -3,6 +3,7 @@ import { Navigate, Route, Routes } from 'react-router-dom'
 import Spinner from './components/ui/Spinner.js'
 import { useBootstrapSession, useSession } from './features/session/useSession.js'
 import AppPage from './pages/AppPage.js'
+import LinkPage from './pages/LinkPage.js'
 import NotFoundPage from './pages/NotFoundPage.js'
 import StudyPlanPage from './pages/StudyPlanPage.js'
 import SignInPage from './pages/SignInPage.js'
@@ -26,6 +27,7 @@ const AppRoutes = () => {
   return (
     <Routes>
       <Route path="/" element={<SignInPage />} />
+      <Route path="/link/:token" element={<LinkPage />} />
       <Route
         path="/app"
         element={

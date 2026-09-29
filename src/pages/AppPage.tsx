@@ -7,6 +7,7 @@ import MobileTabs, { type Tab } from '../components/layout/MobileTabs.js'
 import TopBar from '../components/layout/TopBar.js'
 import NextStepCard, { type NextStepTarget } from '../components/NextStepCard.js'
 import PlanPanel from '../components/PlanPanel.js'
+import TelegramCard from '../components/TelegramCard.js'
 import { useJourney } from '../features/journey/useJourney.js'
 import { cn } from '../utils/cn.js'
 
@@ -44,6 +45,7 @@ const AppPage = () => {
           ) : null}
           <JourneyRail />
           <AdvisorCard />
+          <TelegramCard />
         </aside>
 
         <section className={cn('min-w-0 flex-1 lg:flex', tab === 'CHAT' ? 'flex' : 'hidden')}>
