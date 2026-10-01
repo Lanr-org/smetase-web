@@ -3,7 +3,7 @@ import type { ProfileUpdate } from '../../lib/api/portalApi.js'
 import type { ChatMessage, QuickReply } from '../../lib/api/types.js'
 import { useMe } from '../me/useMe.js'
 import { MATCHES_READY, nextQuestion, type TypedStep } from './onboarding.js'
-import { useMessages, useSaveAnswer, useSendMessage } from './useChat.js'
+import { useMessages, useRequestAdvisor, useSaveAnswer, useSendMessage } from './useChat.js'
 
 // The chat as the student sees it: the saved conversation (AI, advisor, both channels), plus
 // this session's onboarding questions and answers, which only fill the profile and aren't
@@ -34,6 +34,7 @@ export const useChatThread = () => {
   const { data: chat, isLoading } = useMessages()
   const send = useSendMessage()
   const saveAnswer = useSaveAnswer()
+  const requestAdvisor = useRequestAdvisor()
   const [followUp, setFollowUp] = useState<TypedStep | null>(null) // e.g. "What was your IELTS band?"
   const [local, setLocal] = useState<ChatMessage[]>([])
 
@@ -114,6 +115,9 @@ export const useChatThread = () => {
     items,
     isLoading,
     advisorHandling,
+    advisorRequested: chat?.advisorRequested ?? false,
+    requestAdvisor: () => requestAdvisor.mutate(),
+    isRequestingAdvisor: requestAdvisor.isPending,
     isWaiting: send.isPending || saveAnswer.isPending,
     // The queued AI reply hasn't landed yet. The student can keep typing meanwhile:
     // messages sent in a row get one reply.

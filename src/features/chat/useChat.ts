@@ -33,6 +33,7 @@ const updateMessages = (
 ): Chat => ({
   messages: change(chat?.messages ?? []),
   advisorHandling: chat?.advisorHandling ?? false,
+  advisorRequested: chat?.advisorRequested ?? false,
   awaitingReply,
 })
 
@@ -71,6 +72,19 @@ export const useSendMessage = () => {
       queryClient.setQueryData<Chat>(queryKeys.messages, (old) =>
         updateMessages(old, (m) => m.filter((x) => x.id !== result?.pendingId)),
       )
+    },
+  })
+}
+
+export const useRequestAdvisor = () => {
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: studentApi.requestAdvisor,
+    onSuccess: () => {
+      queryClient.setQueryData<Chat>(queryKeys.messages, (old) =>
+        old ? { ...old, advisorRequested: true } : old,
+      )
+      void queryClient.invalidateQueries({ queryKey: queryKeys.messages })
     },
   })
 }

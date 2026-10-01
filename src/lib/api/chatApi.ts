@@ -10,9 +10,14 @@ const withNoReplies = (message: ServerMessage): ChatMessage => ({ ...message, qu
 export const chatApi = {
   getMessages: async (): Promise<Chat> => {
     const chat = (
-      await api.get<ApiSuccess<{ messages: ServerMessage[]; advisorHandling: boolean; awaitingReply: boolean }>>(
-        '/student/messages',
-      )
+      await api.get<
+        ApiSuccess<{
+          messages: ServerMessage[]
+          advisorHandling: boolean
+          advisorRequested: boolean
+          awaitingReply: boolean
+        }>
+      >('/student/messages')
     ).data.data
     return { ...chat, messages: chat.messages.map(withNoReplies) }
   },
@@ -22,4 +27,9 @@ export const chatApi = {
     (await api.post<ApiSuccess<{ messages: ServerMessage[] }>>('/student/messages', { content })).data.data.messages.map(
       withNoReplies,
     ),
+
+  // "Talk to an advisor": flags the chat for staff. Calling it again is harmless.
+  requestAdvisor: async (): Promise<void> => {
+    await api.post('/student/advisor-request')
+  },
 }
