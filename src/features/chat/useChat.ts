@@ -4,17 +4,19 @@ import { queryKeys } from '../../lib/api/queryKeys.js'
 import { studentApi } from '../../lib/api/studentApi.js'
 import type { Chat, ChatMessage } from '../../lib/api/types.js'
 
-// Advisor replies arrive by polling (no realtime push to students yet).
+// AI and advisor replies arrive by polling (no realtime push to students yet).
 const POLL_MS = 5000
+// Faster while the AI is writing a reply, so it shows up soon after it's ready.
+const AWAITING_POLL_MS = 2000
 const SEND_KEY = ['sendMessage']
 
-// Paused while sending, so a poll can't wipe the optimistic message before the reply lands.
+// Paused while sending, so a poll can't wipe the optimistic message before the server's copy lands.
 export const useMessages = () => {
   const sending = useIsMutating({ mutationKey: SEND_KEY }) > 0
   return useQuery({
     queryKey: queryKeys.messages,
     queryFn: studentApi.getMessages,
-    refetchInterval: sending ? false : POLL_MS,
+    refetchInterval: (query) => (sending ? false : query.state.data?.awaitingReply ? AWAITING_POLL_MS : POLL_MS),
   })
 }
 
@@ -24,9 +26,14 @@ const mergeById = (old: ChatMessage[], incoming: ChatMessage[]) => {
   return [...old, ...incoming.filter((m) => !seen.has(m.id))]
 }
 
-const updateMessages = (chat: Chat | undefined, change: (messages: ChatMessage[]) => ChatMessage[]): Chat => ({
+const updateMessages = (
+  chat: Chat | undefined,
+  change: (messages: ChatMessage[]) => ChatMessage[],
+  awaitingReply = chat?.awaitingReply ?? false,
+): Chat => ({
   messages: change(chat?.messages ?? []),
   advisorHandling: chat?.advisorHandling ?? false,
+  awaitingReply,
 })
 
 export const useSendMessage = () => {
@@ -50,8 +57,14 @@ export const useSendMessage = () => {
       return { pendingId: pending.id }
     },
     onSuccess: (newMessages, _content, result) => {
+      // The AI reply is queued: show "typing" (and poll faster) until it arrives,
+      // unless an advisor is handling the chat.
       queryClient.setQueryData<Chat>(queryKeys.messages, (old) =>
-        updateMessages(old, (m) => mergeById(m.filter((x) => x.id !== result?.pendingId), newMessages)),
+        updateMessages(
+          old,
+          (m) => mergeById(m.filter((x) => x.id !== result?.pendingId), newMessages),
+          !(old?.advisorHandling ?? false),
+        ),
       )
     },
     onError: (_error, _content, result) => {

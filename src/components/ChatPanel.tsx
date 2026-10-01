@@ -8,7 +8,7 @@ import Chip from './ui/Chip.js'
 import Spinner from './ui/Spinner.js'
 
 const ChatPanel = () => {
-  const { items, isLoading, advisorHandling, isWaiting, tapReply, submitText } = useChatThread()
+  const { items, isLoading, advisorHandling, isWaiting, aiTyping, tapReply, submitText } = useChatThread()
   const { data: me } = useMe()
   const [draft, setDraft] = useState('')
   const endRef = useRef<HTMLDivElement>(null)
@@ -23,7 +23,7 @@ const ChatPanel = () => {
   // message area and would otherwise push the newest message out of view.
   useEffect(() => {
     endRef.current?.scrollIntoView({ behavior: 'smooth', block: 'end' })
-  }, [items.length, isWaiting, quickReplies.length, advisorName])
+  }, [items.length, isWaiting, aiTyping, quickReplies.length, advisorName])
 
   const submit = (content: string) => {
     const text = content.trim()
@@ -50,7 +50,7 @@ const ChatPanel = () => {
 
       <div className="min-h-0 flex-1 space-y-3 overflow-y-auto px-4 py-5">
         {isLoading ? <Spinner /> : items.map((m) => <MessageBubble key={m.id} message={m} />)}
-        {isWaiting && !advisorName ? <TypingIndicator name="Smetase" /> : null}
+        {(isWaiting || aiTyping) && !advisorName ? <TypingIndicator name="Smetase" /> : null}
         <div ref={endRef} />
       </div>
 

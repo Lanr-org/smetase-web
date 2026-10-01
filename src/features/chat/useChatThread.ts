@@ -115,6 +115,9 @@ export const useChatThread = () => {
     isLoading,
     advisorHandling,
     isWaiting: send.isPending || saveAnswer.isPending,
+    // The queued AI reply hasn't landed yet. The student can keep typing meanwhile:
+    // messages sent in a row get one reply.
+    aiTyping: !advisorHandling && (send.isPending || (chat?.awaitingReply ?? false)),
     tapReply,
     submitText,
   }

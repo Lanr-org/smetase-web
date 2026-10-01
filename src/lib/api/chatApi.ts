@@ -9,12 +9,15 @@ const withNoReplies = (message: ServerMessage): ChatMessage => ({ ...message, qu
 
 export const chatApi = {
   getMessages: async (): Promise<Chat> => {
-    const chat = (await api.get<ApiSuccess<{ messages: ServerMessage[]; advisorHandling: boolean }>>('/student/messages'))
-      .data.data
+    const chat = (
+      await api.get<ApiSuccess<{ messages: ServerMessage[]; advisorHandling: boolean; awaitingReply: boolean }>>(
+        '/student/messages',
+      )
+    ).data.data
     return { ...chat, messages: chat.messages.map(withNoReplies) }
   },
 
-  // The student's saved message, plus the AI reply unless an advisor has taken over.
+  // The student's saved message. The AI reply is queued and arrives on a later getMessages.
   sendMessage: async (content: string): Promise<ChatMessage[]> =>
     (await api.post<ApiSuccess<{ messages: ServerMessage[] }>>('/student/messages', { content })).data.data.messages.map(
       withNoReplies,

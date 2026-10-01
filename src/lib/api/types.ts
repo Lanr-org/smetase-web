@@ -153,7 +153,8 @@ export type ChatMessage = {
 }
 
 // advisorHandling: an advisor has taken over, so the AI doesn't reply until it's handed back.
-export type Chat = { messages: ChatMessage[]; advisorHandling: boolean }
+// awaitingReply: the AI's reply to the student's last message is on its way (show "typing").
+export type Chat = { messages: ChatMessage[]; advisorHandling: boolean; awaitingReply: boolean }
 
 // A one-page summary a student shares with a parent, sponsor or anyone helping them.
 export type StudyPlan = {
