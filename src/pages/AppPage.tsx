@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import AdvisorCard from '../components/AdvisorCard.js'
 import ChatPanel from '../components/ChatPanel.js'
+import InterviewCard from '../components/InterviewCard.js'
 import JourneyRail from '../components/JourneyRail.js'
 import MobileTabs, { type Tab } from '../components/layout/MobileTabs.js'
 import TopBar from '../components/layout/TopBar.js'
@@ -45,6 +46,7 @@ const AppPage = () => {
           ) : null}
           <JourneyRail />
           <AdvisorCard />
+          <InterviewCard />
           <TelegramCard />
         </aside>
 

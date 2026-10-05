@@ -3,6 +3,7 @@ import { Navigate, Route, Routes } from 'react-router-dom'
 import Spinner from './components/ui/Spinner.js'
 import { useBootstrapSession, useSession } from './features/session/useSession.js'
 import AppPage from './pages/AppPage.js'
+import InterviewPage from './pages/InterviewPage.js'
 import LinkPage from './pages/LinkPage.js'
 import NotFoundPage from './pages/NotFoundPage.js'
 import PublicStudyPlanPage from './pages/PublicStudyPlanPage.js'
@@ -44,6 +45,14 @@ const AppRoutes = () => {
         element={
           <RequireSession>
             <StudyPlanPage />
+          </RequireSession>
+        }
+      />
+      <Route
+        path="/interview"
+        element={
+          <RequireSession>
+            <InterviewPage />
           </RequireSession>
         }
       />
