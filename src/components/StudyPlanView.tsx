@@ -57,6 +57,15 @@ const StudyPlanView = ({ plan, studentName }: Props) => {
           Tuition only. Living costs, visa fees and other expenses aren't included yet; the Smetase advisor will
           confirm the full cost.
         </p>
+        {plan.programme.verifiedAt ? (
+          <p className="mt-2 flex items-start gap-1.5 text-xs text-muted">
+            <CheckCircle2 size={14} className="mt-0.5 flex-none text-ink" />
+            <span>
+              Tuition{plan.programme.feesAcademicYear ? ` for ${plan.programme.feesAcademicYear}` : ''} checked
+              against {plan.programme.schoolName}’s own course page on {formatDate(plan.programme.verifiedAt)}.
+            </span>
+          </p>
+        ) : null}
       </Section>
 
       <Section title="Requirements">

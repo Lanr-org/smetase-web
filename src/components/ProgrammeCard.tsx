@@ -1,9 +1,9 @@
-import { Bookmark, BookmarkCheck, Check } from 'lucide-react'
+import { BadgeCheck, Bookmark, BookmarkCheck, Check, ExternalLink, Info } from 'lucide-react'
 import { useState } from 'react'
 import { useChooseProgramme, useSetShortlisted } from '../features/matches/useMatches.js'
 import type { ProgrammeMatch } from '../lib/api/types.js'
 import { cn } from '../utils/cn.js'
-import { formatMoney } from '../utils/format.js'
+import { formatDate, formatMoney } from '../utils/format.js'
 import Badge from './ui/Badge.js'
 import Button from './ui/Button.js'
 
@@ -29,6 +29,35 @@ const ScoreBreakdown = ({ scores }: { scores: ProgrammeMatch['scores'] }) => {
   )
 }
 
+// Where the fees came from: the trust line under the facts.
+const SourceLine = ({ programme }: { programme: ProgrammeMatch }) =>
+  programme.verifiedAt ? (
+    <p className="mt-3 flex items-start gap-1.5 text-xs leading-5 text-muted">
+      <BadgeCheck size={14} className="mt-0.5 flex-none text-ink" />
+      <span>
+        Checked against the university’s course page on {formatDate(programme.verifiedAt)}
+        {programme.sourceUrl ? (
+          <>
+            {' · '}
+            <a
+              href={programme.sourceUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-0.5 font-medium text-ink underline-offset-4 hover:underline"
+            >
+              See the page <ExternalLink size={12} />
+            </a>
+          </>
+        ) : null}
+      </span>
+    </p>
+  ) : (
+    <p className="mt-3 flex items-start gap-1.5 text-xs leading-5 text-muted">
+      <Info size={14} className="mt-0.5 flex-none" />
+      Fees not confirmed with the university yet. Your advisor checks them before you apply.
+    </p>
+  )
+
 const ProgrammeCard = ({ programme }: { programme: ProgrammeMatch }) => {
   const shortlist = useSetShortlisted()
   const choose = useChooseProgramme()
@@ -51,7 +80,9 @@ const ProgrammeCard = ({ programme }: { programme: ProgrammeMatch }) => {
 
       <dl className="mt-4 grid grid-cols-2 gap-3 text-xs">
         <div>
-          <dt className="text-muted">Tuition / year</dt>
+          <dt className="text-muted">
+            {programme.feesAcademicYear ? `Tuition ${programme.feesAcademicYear}` : 'Tuition / year'}
+          </dt>
           <dd className="mt-0.5 font-mono text-sm">{formatMoney(programme.tuition)}</dd>
         </div>
         <div>
@@ -63,6 +94,8 @@ const ProgrammeCard = ({ programme }: { programme: ProgrammeMatch }) => {
           <dd className="mt-0.5 text-sm">{programme.intakes.join(' · ')}</dd>
         </div>
       </dl>
+
+      <SourceLine programme={programme} />
 
       <ul className="mt-4 space-y-1.5">
         {programme.reasons.map((reason) => (
