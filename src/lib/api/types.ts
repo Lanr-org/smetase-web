@@ -107,6 +107,8 @@ export type StudentMe = {
   conversationMode: 'AI_BOT' | 'HUMAN_ADVISOR'
   // A Telegram account is linked, so advisor replies can reach them there too.
   telegramLinked: boolean
+  // Clicked "I agree" on the current terms; until then the API locks chat, matches and plans.
+  termsAccepted: boolean
 }
 
 // currency is any ISO 4217 code (GBP, CAD, EUR, NGN…).
@@ -122,6 +124,9 @@ export type ProgrammeMatch = {
   duration: string // e.g. "2 years"
   intakes: string[]
   tuition: Money
+  feesAcademicYear: string | null // e.g. "2026/27"
+  verifiedAt: string | null // when a person checked the fees against the university's page
+  sourceUrl: string | null // that page; only sent when verified
   scores: {
     overall: number
     programmeFit: number
