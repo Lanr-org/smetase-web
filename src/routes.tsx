@@ -1,7 +1,9 @@
 import type { ReactNode } from 'react'
 import { Navigate, Route, Routes } from 'react-router-dom'
 import Spinner from './components/ui/Spinner.js'
+import { useMe } from './features/me/useMe.js'
 import { useBootstrapSession, useSession } from './features/session/useSession.js'
+import AgreementPage from './pages/AgreementPage.js'
 import AppPage from './pages/AppPage.js'
 import InterviewPage from './pages/InterviewPage.js'
 import LinkPage from './pages/LinkPage.js'
@@ -20,7 +22,21 @@ const RequireSession = ({ children }: { children: ReactNode }) => {
       </div>
     )
   }
-  return status === 'signedIn' ? children : <Navigate replace to="/" />
+  return status === 'signedIn' ? <RequireAgreement>{children}</RequireAgreement> : <Navigate replace to="/" />
+}
+
+// Signed in, but the app only opens once the student has clicked "I agree".
+const RequireAgreement = ({ children }: { children: ReactNode }) => {
+  const { data: me, isError } = useMe()
+  if (isError) return children // let the page show its own error rather than a spinner forever
+  if (!me) {
+    return (
+      <div className="grid min-h-dvh place-items-center">
+        <Spinner />
+      </div>
+    )
+  }
+  return me.termsAccepted ? children : <AgreementPage />
 }
 
 const AppRoutes = () => {

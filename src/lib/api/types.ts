@@ -107,6 +107,8 @@ export type StudentMe = {
   conversationMode: 'AI_BOT' | 'HUMAN_ADVISOR'
   // A Telegram account is linked, so advisor replies can reach them there too.
   telegramLinked: boolean
+  // Clicked "I agree" on the current terms; until then the API locks chat, matches and plans.
+  termsAccepted: boolean
 }
 
 // currency is any ISO 4217 code (GBP, CAD, EUR, NGN…).

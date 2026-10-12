@@ -16,8 +16,15 @@ declare global {
   }
 }
 
-// Google's official button (its own colours and logo, per Google's branding rules).
-const GoogleSignInButton = ({ onCredential }: { onCredential: (credential: string) => void }) => {
+// Google's official button (its own colours and logo, per Google's branding rules). Google draws it
+// in an iframe we can't disable, so `disabled` dims it and blocks clicks and focus around it.
+const GoogleSignInButton = ({
+  onCredential,
+  disabled = false,
+}: {
+  onCredential: (credential: string) => void
+  disabled?: boolean
+}) => {
   const containerRef = useRef<HTMLDivElement>(null)
   const callbackRef = useRef(onCredential)
   const [ready, setReady] = useState(() => Boolean(window.google))
@@ -69,8 +76,14 @@ const GoogleSignInButton = ({ onCredential }: { onCredential: (credential: strin
   }
 
   return (
-    <div ref={containerRef} className="flex min-h-11 justify-center">
-      {ready ? null : <Spinner />}
+    <div
+      aria-disabled={disabled}
+      inert={disabled}
+      className={disabled ? 'pointer-events-none opacity-40 transition-opacity' : 'transition-opacity'}
+    >
+      <div ref={containerRef} className="flex min-h-11 justify-center">
+        {ready ? null : <Spinner />}
+      </div>
     </div>
   )
 }

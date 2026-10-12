@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import GoogleSignInButton from '../components/GoogleSignInButton.js'
+import SignInTerms from '../components/SignInTerms.js'
 import Button from '../components/ui/Button.js'
 import Spinner from '../components/ui/Spinner.js'
 import Wordmark from '../components/ui/Wordmark.js'
@@ -25,6 +26,7 @@ const LinkPage = () => {
   const [pending, setPending] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [notice, setNotice] = useState<string | null>(null)
+  const [agreed, setAgreed] = useState(false)
 
   const handleCredential = async (credential: string) => {
     setPending(true)
@@ -64,8 +66,13 @@ const LinkPage = () => {
               them to the same account.
             </p>
             <div className="mt-8">
-              {pending ? <Spinner /> : <GoogleSignInButton onCredential={(c) => void handleCredential(c)} />}
+              {pending ? (
+                <Spinner />
+              ) : (
+                <GoogleSignInButton disabled={!agreed} onCredential={(c) => void handleCredential(c)} />
+              )}
             </div>
+            <SignInTerms checked={agreed} onChange={setAgreed} />
             {error ? (
               <p role="alert" className="mt-3 text-center text-sm text-caution">
                 {error}

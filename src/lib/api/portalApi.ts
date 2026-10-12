@@ -30,6 +30,9 @@ export const portalApi = {
   updateProfile: async (update: ProfileUpdate) =>
     (await api.patch<ApiSuccess<StudentMe>>('/student/me/profile', update)).data.data,
 
+  // The one-click agreement (16+, parent/guardian agrees if under 18, Terms and Privacy Policy).
+  acceptTerms: async () => (await api.post<ApiSuccess<StudentMe>>('/student/me/accept-terms')).data.data,
+
   getJourney: () => get<Journey>('/student/journey'),
 
   getMatches: () => get<ProgrammeMatch[]>('/student/matches'),
